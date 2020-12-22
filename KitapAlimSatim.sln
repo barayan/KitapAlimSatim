@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30804.86
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KitapAlimSatim.Web", "KitapAlimSatim.Web\KitapAlimSatim.Web.csproj", "{5B65DEB1-554A-43D0-89D7-22F04D7A3BF7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KitapAlimSatim.Data", "KitapAlimSatim.Data\KitapAlimSatim.Data.csproj", "{E7F97C24-4530-4BB2-9EA8-06FE2F929168}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5B65DEB1-554A-43D0-89D7-22F04D7A3BF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5B65DEB1-554A-43D0-89D7-22F04D7A3BF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5B65DEB1-554A-43D0-89D7-22F04D7A3BF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5B65DEB1-554A-43D0-89D7-22F04D7A3BF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7F97C24-4530-4BB2-9EA8-06FE2F929168}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7F97C24-4530-4BB2-9EA8-06FE2F929168}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7F97C24-4530-4BB2-9EA8-06FE2F929168}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7F97C24-4530-4BB2-9EA8-06FE2F929168}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7A026AC7-1237-49F0-9D34-59CECC47ED2A}
+	EndGlobalSection
+EndGlobal
