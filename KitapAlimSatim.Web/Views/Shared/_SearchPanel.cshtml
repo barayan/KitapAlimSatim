@@ -1,0 +1,11 @@
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+<div class="search-panel">
+    <center>
+        <div>
+            <h2>@Localizer["Header"]</h2>
+        </div>
+        <form method="post" asp-action="Search" asp-controller="Home">
+            <input name="search" type="text" placeholder="@Localizer["Input"]">
+        </form>
+    </center>
+</div>

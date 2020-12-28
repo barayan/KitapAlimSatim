@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -17,27 +18,49 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Product" asp-action="Add">@Localizer["SellBook"]</a>
+                        </li>
+                        @{
+                            // Oturumu kontorl ediyoruz ona göre Login veya Logout değeri döndürülüyor.
+                            var sessionName = new byte[20];
+                            bool name = Context.Session.TryGetValue("login", out sessionName);
+                            string login = "";
+
+                            if (name)
+                            {
+                                login = System.Text.Encoding.UTF8.GetString(sessionName);
+                            }
+
+                            if (login == "")
+                            {
+                                <li>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">@Localizer["Login"]</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li>
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">@Localizer["Logout"]</a>
+                                </li>
+                            }
+                        }
+                    </ul>
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Anasayfa</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Gizlilik</a>
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">@Localizer["Home"]</a>
                         </li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div style="background: aliceblue; min-height: 200px; display: grid; align-items: center; margin-bottom: 20px">
-        <center>
-            <div>
-                <h2>Aradığın kitap seni bekiyor..</h2>
-            </div><form>
-                <input type="text" placeholder="Kitap, yazar adı, yayın evi ara" style="padding: 4px 14px;border-radius: 9px;border: 1px solid gray;outline: none;width: 400px;">
-            </form>
-        </center>
-    </div>
+    @if(IsSectionDefined("Search"))
+    {
+        // Container dışında ve sadece istenilen sayfada yazdırılması için section kullanıyoruz.
+        @RenderSection("Search")
+    }
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -46,7 +69,12 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; @DateTime.Now.Year - kitapalsat - <a asp-area="" asp-controller="Home" asp-action="Privacy">Gizlilik</a>
+            <div class="footer-main">
+                <div>
+                    &copy; @DateTime.Now.Year - kitapalsat
+                </div>
+                <partial name="_Culture">
+            </div>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
