@@ -4,7 +4,7 @@ using System.Text;
 
 namespace KitapAlimSatim.Data.Entities
 {
-    class Order : BaseEntity
+    public class Order : BaseEntity
     {
         public int UserId { get; set; }
 

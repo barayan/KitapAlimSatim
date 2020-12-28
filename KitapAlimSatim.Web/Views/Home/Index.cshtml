@@ -1,8 +1,20 @@
-﻿@{
+﻿@using KitapAlimSatim.Data.Entities
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text">
+    <div style="display: flex; flex-wrap: wrap; ">
+        @foreach (Book item in (List<Book>)ViewData["kitaplar"])
+        {
+        <div style="margin-bottom: 25px;">
+            <div style="margin: 0 25px;">
+                <a href="~/Product/@item.Id" style="display: block; width: 100%; color: inherit; text-decoration: none">
+                    <center>@item.Name</center>
+                    <img style="margin-top: 5px; border: 1px solid; width: 200px; height: 300px;" src="~/media/image/@item.FileName" />
+                </a>
+            </div>
+        </div>
+        }
+    </div>
 </div>

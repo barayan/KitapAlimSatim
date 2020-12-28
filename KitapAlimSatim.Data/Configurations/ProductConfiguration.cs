@@ -7,11 +7,13 @@ using System.Text;
 
 namespace KitapAlimSatim.Data.Configurations
 {
-    class ProductConfiguration : IEntityTypeConfiguration<Product>
+    class ProductConfiguration : BaseEntityTypeConfiguration<Product>
     {
-        public void Configure(EntityTypeBuilder<Product> builder)
+        public override void Configure(EntityTypeBuilder<Product> builder)
         {
-
+            builder.Property(e => e.Stock).HasDefaultValue(1);
+            builder.Property(e => e.IsActive).HasDefaultValue(true);
+            base.Configure(builder);
         }
     }
 }

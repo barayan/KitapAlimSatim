@@ -4,7 +4,7 @@ using System.Text;
 
 namespace KitapAlimSatim.Data.Entities
 {
-    class User : BaseEntity
+    public class User : BaseEntity
     {
         public string Email { get; set; }
 
@@ -12,8 +12,10 @@ namespace KitapAlimSatim.Data.Entities
 
         public string Name { get; set; }
 
-        public bool IsAdmin { get; set; } = false;
+        public string Address { get; set; }
 
-        public string UserSettings { get; set; }
+        public bool? IsAdmin { get; set; }
+
+        public string Language { get; set; }
     }
 }

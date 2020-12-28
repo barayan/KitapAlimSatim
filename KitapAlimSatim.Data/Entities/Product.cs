@@ -4,7 +4,7 @@ using System.Text;
 
 namespace KitapAlimSatim.Data.Entities
 {
-    class Product : BaseEntity
+    public class Product : BaseEntity
     {
         public int BookId { get; set; }
 
@@ -14,6 +14,6 @@ namespace KitapAlimSatim.Data.Entities
 
         public int Stock { get; set; }
 
-        public bool IsActive { get; set; } = true;
+        public bool? IsActive { get; set; }
     }
 }

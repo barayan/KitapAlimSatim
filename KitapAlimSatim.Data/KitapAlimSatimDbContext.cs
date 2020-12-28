@@ -12,6 +12,11 @@ namespace KitapAlimSatim.Data
 
         }
 
+        public KitapAlimSatimDbContext()
+        {
+
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(KitapAlimSatimDbContext).Assembly);

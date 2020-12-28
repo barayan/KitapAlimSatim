@@ -6,6 +6,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\media\image\deli-kurt.jpg" />
+    <None Include="wwwroot\media\image\dijital-kale.jpg" />
+    <None Include="wwwroot\media\image\harry-potter.jpg" />
+    <None Include="wwwroot\media\image\hayaletin-ciragi.jpg" />
+    <None Include="wwwroot\media\image\olasiliksiz.jpg" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.10" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.1">

@@ -7,11 +7,11 @@ using System.Text;
 
 namespace KitapAlimSatim.Data.Configurations
 {
-    class OrderConfiguration : BaseEntityTypeConfiguration<Order>
+    public abstract class BaseEntityTypeConfiguration<TBase> : IEntityTypeConfiguration<TBase> where TBase : BaseEntity
     {
-        public override void Configure(EntityTypeBuilder<Order> builder)
+        public virtual void Configure(EntityTypeBuilder<TBase> builder)
         {
-            base.Configure(builder);
+            builder.Property(e => e.CreatedAt).HasDefaultValueSql("now()");
         }
     }
 }

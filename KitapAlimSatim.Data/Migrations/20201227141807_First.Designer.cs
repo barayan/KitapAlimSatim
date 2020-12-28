@@ -3,15 +3,17 @@ using System;
 using KitapAlimSatim.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 namespace KitapAlimSatim.Data.Migrations
 {
     [DbContext(typeof(KitapAlimSatimDbContext))]
-    partial class KitapAlimSatimDbContextModelSnapshot : ModelSnapshot
+    [Migration("20201227141807_First")]
+    partial class First
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

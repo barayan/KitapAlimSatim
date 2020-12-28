@@ -1,4 +1,6 @@
-﻿using KitapAlimSatim.Web.Models;
+﻿using KitapAlimSatim.Data;
+using KitapAlimSatim.Data.Entities;
+using KitapAlimSatim.Web.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -11,15 +13,17 @@ namespace KitapAlimSatim.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly KitapAlimSatimDbContext _kitapAlimSatimDbContext;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(KitapAlimSatimDbContext kitapAlimSatimDbContext)
         {
-            _logger = logger;
+            _kitapAlimSatimDbContext = kitapAlimSatimDbContext;
         }
 
         public IActionResult Index()
         {
+            List<Book> kitaplar = _kitapAlimSatimDbContext.Set<Book>().OrderByDescending(e => e.CreatedAt).Take(12).ToList();
+            ViewData["kitaplar"] = kitaplar;
             return View();
         }
 

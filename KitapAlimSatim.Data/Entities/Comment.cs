@@ -4,7 +4,7 @@ using System.Text;
 
 namespace KitapAlimSatim.Data.Entities
 {
-    class Comment : BaseEntity
+    public class Comment : BaseEntity
     {
         public string Message { get; set; }
 

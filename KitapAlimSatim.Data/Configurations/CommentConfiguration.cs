@@ -7,11 +7,11 @@ using System.Text;
 
 namespace KitapAlimSatim.Data.Configurations
 {
-    class CommentConfiguration : IEntityTypeConfiguration<Comment>
+    class CommentConfiguration : BaseEntityTypeConfiguration<Comment>
     {
-        public void Configure(EntityTypeBuilder<Comment> builder)
+        public override void Configure(EntityTypeBuilder<Comment> builder)
         {
-            
+            base.Configure(builder);
         }
     }
 }
