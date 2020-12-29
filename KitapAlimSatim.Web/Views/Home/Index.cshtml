@@ -1,4 +1,4 @@
-﻿@using KitapAlimSatim.Data.Entities
+﻿@model IEnumerable<KitapAlimSatim.Web.Models.SearchModel>
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 @{
     ViewData["Title"] = Localizer["HomePage"].Value;
@@ -8,15 +8,27 @@
     <partial name="_SearchPanel" />
 }
 <div class="homepage-books">
-    @foreach (Book item in (List<Book>)ViewData["kitaplar"])
+    @foreach (var item in Model)
     {
         <div class="book-item">
             <div class="book-item-div">
-                <a href="~/Product/@item.Id">
-                    <center>@item.Name</center>
-                    <img src="~/media/image/@item.FileName" />
+                <a href="~/Product/@item.product.Id">
+                    <center>@item.book.Name</center>
+                    <img src="~/media/image/@item.book.FileName" />
+                    <br />
+                    <b>
+                        @item.book.Author
+                        <br />
+                        @item.book.Publisher
+                        <br />
+                        @item.product.Price TL
+                    </b>
                 </a>
             </div>
         </div>
+    }
+    @if(Model.Count() == 0)
+    {
+        <span>Ürün bulunamadı.</span>
     }
 </div>

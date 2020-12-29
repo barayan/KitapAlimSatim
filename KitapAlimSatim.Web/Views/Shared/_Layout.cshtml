@@ -25,7 +25,7 @@
                         @{
                             // Oturumu kontorl ediyoruz ona göre Login veya Logout değeri döndürülüyor.
                             var sessionName = new byte[20];
-                            bool name = Context.Session.TryGetValue("login", out sessionName);
+                            bool name = Context.Session.TryGetValue("Login", out sessionName);
                             string login = "";
 
                             if (name)

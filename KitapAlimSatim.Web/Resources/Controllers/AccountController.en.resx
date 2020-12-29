@@ -117,10 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Header" xml:space="preserve">
-    <value>Aradığın kitap seni bekliyor..</value>
+  <data name="EmailIsTaken" xml:space="preserve">
+    <value>Email is taken</value>
   </data>
-  <data name="Input" xml:space="preserve">
-    <value>Kitap, yazar adı, yayın evi ara</value>
+  <data name="InvalidCredentials" xml:space="preserve">
+    <value>Email or password incorrect</value>
+  </data>
+  <data name="PasswordsNotMatch" xml:space="preserve">
+    <value>Passwords not match</value>
+  </data>
+  <data name="RegisterGeneralError" xml:space="preserve">
+    <value>All fields must be filled completely</value>
+  </data>
+  <data name="RegisterSuccess" xml:space="preserve">
+    <value>Registration Successful</value>
   </data>
 </root>

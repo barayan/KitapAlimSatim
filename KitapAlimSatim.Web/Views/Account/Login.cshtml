@@ -1,0 +1,47 @@
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+@{
+    ViewData["Title"] = Localizer["Login"].Value;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="login-reg-panel">
+    <div class="login-info-box">
+        <h2>@Localizer["HaveAnAccount"]</h2>
+        <label id="label-register" for="log-reg-show">@Localizer["Login"]</label>
+        <input type="radio" name="active-log-panel" id="log-reg-show" checked="checked">
+    </div>
+
+    <div class="register-info-box">
+        <h2>@Localizer["DontHaveAnAccount"]</h2>
+        <label id="label-login" for="log-login-show">@Localizer["Register"]</label>
+        <input type="radio" name="active-log-panel" id="log-login-show">
+    </div>
+
+    <div class="white-panel">
+        <div class="login-show">
+            <form asp-action="Login" asp-controller="Account" method="post">
+                <h2>@Localizer["Login"].Value.ToUpper()</h2>
+                <span class="text-danger">@Html.ValidationMessage("LoginError")</span>
+                <input type="text" name="email" placeholder="@Localizer["Email"]">
+                <input type="password" name="password" placeholder="@Localizer["Password"]">
+                <input type="submit" value="@Localizer["Login"]">
+            </form>
+        </div>
+        <div class="register-show">
+            <form asp-action="Register" asp-controller="Account" method="post">
+                <h2>@Localizer["Register"].Value.ToUpper()</h2>
+                <span class="text-danger">@Html.ValidationMessage("RegisterError")</span>
+                <span class="text-success">@ViewData["RegisterState"]</span>
+                <input type="text" name="name" placeholder="@Localizer["Name"]" />
+                <input type="text" name="email" placeholder="@Localizer["Email"]">
+                <input type="password" name="password" placeholder="@Localizer["Password"]">
+                <input type="password" name="confirmPassword" placeholder="@Localizer["ConfirmPassword"]">
+                <input type="submit" value="@Localizer["Register"]">
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var form = "@ViewContext.RouteData.Values["action"]";
+</script>
+

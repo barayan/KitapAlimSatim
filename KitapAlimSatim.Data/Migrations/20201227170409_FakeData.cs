@@ -87,7 +87,7 @@ namespace KitapAlimSatim.Data.Migrations
                 values: new object[]
                 {
                     4,
-                    "Harry Potter ve Felsefer Taşı",
+                    "Harry Potter ve Felsefe Taşı",
                     "J. K. Rowling",
                     "harry-potter.jpg",
                     "“Harry, elleri titreyerek zarfı çevirince mor balmumundan bir mühür gördü; bir arma  koca bir ‘H’ harfinin çevresinde bir aslan, bir kartal, bir porsuk, bir de yılan.”Harry Potter sıradan bir çocuk olduğunu sanırken, bir baykuşun getirdiği mektupla yaşamı değişir: Başvurmadığı halde Hogwarts Cadılık ve Büyücülük Okulu’na kabul edilmiştir. Burada birbirinden ilginç dersler alır, iki arkadaşıyla birlikte maceradan maceraya koşar. Yaşayarak öğrendikleri sayesinde küçük yaşta becerikli bir büyücü olup çıkar.",
