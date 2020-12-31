@@ -1,0 +1,96 @@
+﻿@using KitapAlimSatim.Data.Entities
+@model IEnumerable<User>
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+
+@{
+    User user = Model.First();
+    ViewData["Title"] = user.Name;
+}
+<div class="row profile-panel">
+    <div class="col-md-3">
+        <ul class="nav nav-pills nav-stacked admin-menu">
+            <li class="active"><a data-target-id="ayarlar">@Localizer["Settings"]</a></li>
+            <li><a data-target-id="siparislerim">@Localizer["Orders"]</a></li>
+            <li><a data-target-id="satislarim">@Localizer["Products"]</a></li>
+            @if (user.IsAdmin == true)
+            {
+                <li class="disabled"><a data-target-id="admin">ADMIN</a></li>
+                <li><a data-target-id="kullanicilar">@Localizer["Users"]</a></li>
+                <li><a data-target-id="kitaplar">@Localizer["Books"]</a></li>
+                <li><a data-target-id="urunler">@Localizer["Products"]</a></li>
+                <li><a data-target-id="siparisler">@Localizer["Orders"]</a></li>
+                <li><a data-target-id="yorumlar">@Localizer["Comments"]</a></li>
+            }
+        </ul>
+    </div>
+    <div class="col-md-9 well admin-content" data-loading="false" id="ayarlar">
+        <form>
+            <h3>@Localizer["PersonalData"]</h3>
+            <div class="form-group">
+                <label for="Name">@Localizer["Name"]</label>
+                <input class="form-control" type="text" name="Name" value="@user.Name" />
+            </div>
+            <div class="form-group">
+                <label for="Address">@Localizer["Address"]</label>
+                <textarea name="Address" class="form-control" rows="5">@user.Address</textarea>
+            </div>
+            <div class="form-save">
+                <div></div>
+                <div>
+                    <span class="text-success display-none">&#10004; @Localizer["Saved"]</span>
+                    <span class="text-danger display-none">&times; @Localizer["Error"]<span class="error"></span></span>
+                    <button type="button" class="btn btn-primary" data-action="PersonalData">@Localizer["Save"]</button>
+                </div>
+            </div>
+        </form>
+        <form>
+            <!--##-->
+            <h3>@Localizer["ChangePassword"]</h3>
+            <div class="form-group">
+                <label for="Password">@Localizer["OldPassword"]</label>
+                <input class="form-control" type="password" name="Password" />
+            </div>
+            <div class="form-group">
+                <label for="NewPassword">@Localizer["NewPassword"]</label>
+                <input class="form-control" type="password" name="NewPassword" />
+            </div>
+            <div class="form-group">
+                <label for="ConfirmNewPassword">@Localizer["ConfirmNewPassword"]</label>
+                <input class="form-control" type="password" name="ConfirmNewPassword" />
+            </div>
+            <div class="form-save">
+                <div></div>
+                <div>
+                    <span class="text-success display-none">&#10004; @Localizer["Saved"]</span>
+                    <span class="text-danger display-none">&times; @Localizer["Error"]<span class="error"></span></span>
+                    <button type="button" class="btn btn-primary" data-action="ChangePassword">@Localizer["Save"]</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-9 well admin-content" id="siparislerim">
+        Siparişlerim
+    </div>
+    <div class="col-md-9 well admin-content" id="satislarim">
+        Satışlarım
+    </div>
+    @if (user.IsAdmin == true)
+    {
+        <div class="col-md-9 well admin-content" id="kullanicilar">
+            Kullanıcılar
+        </div>
+        <div class="col-md-9 well admin-content" id="kitaplar">
+            Kitaplar
+        </div>
+        <div class="col-md-9 well admin-content" id="urunler">
+            Ürünler
+        </div>
+        <div class="col-md-9 well admin-content" id="siparisler">
+            Siparişler
+        </div>
+        <div class="col-md-9 well admin-content" id="yorumlar">
+            Yorumlar
+        </div>
+    }
+</div>
+

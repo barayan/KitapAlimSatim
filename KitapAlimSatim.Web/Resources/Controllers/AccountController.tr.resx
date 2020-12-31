@@ -120,8 +120,14 @@
   <data name="EmailIsTaken" xml:space="preserve">
     <value>E-posta alınmış</value>
   </data>
+  <data name="ErrorNameNull" xml:space="preserve">
+    <value>İsim boş bırakılamaz</value>
+  </data>
   <data name="InvalidCredentials" xml:space="preserve">
     <value>E-posta veya parola hatalı</value>
+  </data>
+  <data name="PasswordIncorrect" xml:space="preserve">
+    <value>Parola hatalı</value>
   </data>
   <data name="PasswordsNotMatch" xml:space="preserve">
     <value>Parolalar uyuşmuyor</value>

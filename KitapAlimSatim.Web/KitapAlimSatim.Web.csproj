@@ -25,10 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Resources\Views\Product\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\KitapAlimSatim.Data\KitapAlimSatim.Data.csproj" />
   </ItemGroup>
 

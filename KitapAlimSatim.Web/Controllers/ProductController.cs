@@ -3,6 +3,7 @@ using KitapAlimSatim.Data.Entities;
 using KitapAlimSatim.Web.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Localization;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -14,11 +15,13 @@ namespace KitapAlimSatim.Web.Controllers
     public class ProductController : Controller
     {
         private readonly KitapAlimSatimDbContext _kitapAlimSatimDbContext;
+        private readonly IHtmlLocalizer<ProductController> _localizer;
         public User user;
 
-        public ProductController(KitapAlimSatimDbContext kitapAlimSatimDbContext)
+        public ProductController(KitapAlimSatimDbContext kitapAlimSatimDbContext, IHtmlLocalizer<ProductController> localizer)
         {
             _kitapAlimSatimDbContext = kitapAlimSatimDbContext;
+            _localizer = localizer;
         }
 
         private void GetUser()
@@ -37,11 +40,20 @@ namespace KitapAlimSatim.Web.Controllers
             ProductModel model = JsonConvert.DeserializeObject<ProductModel>(JsonConvert.SerializeObject(product));
             model.Book = _kitapAlimSatimDbContext.Book.Find(model.BookId);
             model.User = _kitapAlimSatimDbContext.User.Find(model.UserId);
+            var comments = _kitapAlimSatimDbContext.Comment.Where(e => e.ProductId == productId).ToList();
+            var commentModel = JsonConvert.DeserializeObject<List<CommentModel>>(JsonConvert.SerializeObject(comments));
+            foreach(var item in commentModel)
+            {
+                item.User = _kitapAlimSatimDbContext.User.Find(item.UserId);
+            }
+            ViewData["comments"] = commentModel;
             return View(model);
         }
 
         public IActionResult Add()
         {
+            GetUser();
+            if (user == null) return RedirectToAction("Login", "Account");
             List<Book> model = _kitapAlimSatimDbContext.Book.ToList();
             return View(model);
         }
@@ -63,10 +75,28 @@ namespace KitapAlimSatim.Web.Controllers
                     UserId = user.Id
                 });
                 _kitapAlimSatimDbContext.SaveChanges();
-                ViewData["ProductSuccess"] = "Ürün kaydedildi.";
+                ViewData["ProductSuccess"] = _localizer["ProductSuccess"].Value;
             }
-            else ViewData["ProductError"] = "Hata meydana geldi.";
+            else ViewData["ProductError"] = _localizer["ProductError"].Value;
             return View(model);
+        }
+
+        [HttpPost]
+        public IActionResult Comment(string comment, int productId)
+        {
+            GetUser();
+            if(user != null && !string.IsNullOrEmpty(comment))
+            {
+                _kitapAlimSatimDbContext.Comment.Add(new Comment
+                {
+                    Message = comment,
+                    ProductId = productId,
+                    UserId = user.Id
+                });
+                _kitapAlimSatimDbContext.SaveChanges();
+            }
+
+            return RedirectToAction("Index", new { productId = productId });
         }
     }
 }

@@ -9,7 +9,7 @@
 
 <div class="culture-form">
     <form asp-action="CultureManager" asp-controller="Home" method="post" asp-route-returnUrl="@returnUrl">
-        <select name="culture" asp-for="@culture.RequestCulture.UICulture.Name" asp-items="cultureList"
+        <select class="form-control" name="culture" asp-for="@culture.RequestCulture.UICulture.Name" asp-items="cultureList"
                 onchange="this.form.submit();"></select>
     </form>
 </div>

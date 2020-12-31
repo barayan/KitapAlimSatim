@@ -12,6 +12,11 @@ a {
   color: #0366d6;
 }
 
+textarea {
+    max-width: 100%;
+    min-width: 100%;
+}
+
 .btn-primary {
   color: #fff;
   background-color: #1b6ec2;

@@ -58,13 +58,41 @@ $(document).ready(function () {
         if (cookie == "") {
             cookie = [];
         } else {
-            cookie = JSON.parse(cookie);
+            cookie = JSON.parse(decodeURIComponent(cookie));
         }
         if (!cookie.includes(productId)) cookie.push(productId);
-        setCookie(cname, JSON.stringify(cookie));
+        setCookie(cname, encodeURIComponent(JSON.stringify(cookie)), 7);
 
         // sepette gösterme
         $('#productCount').html(` (${cookie.length})`);
+    });
+    // sepete ekleme
+    $('.remove-product').click(function () {
+        var self = $(this),
+            pid = self.data('pid'),
+            cname = 'ProductCart',
+            cookie = getCookie(cname);
+
+        if (cookie == "") {
+            cookie = [];
+        } else {
+            cookie = JSON.parse(decodeURIComponent(cookie));
+        }
+        var newArray = [];
+        for (var ix in cookie) {
+            var val = cookie[ix];
+            if (val != pid) newArray.push(val);
+        }
+        setCookie(cname, encodeURIComponent(JSON.stringify(newArray)), 7);
+
+        // sepette gösterme
+        $('#productCount').html(` (${newArray.length})`);
+        $('#productCountTitle').html(newArray.length);
+        // kaldırma
+        self.parents('.row:eq(0)').remove();
+        // toplam tutarı değiştirme
+        subtotal -= parseFloat(self.data('price'));
+        $('#subTotal').html(`${Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(subtotal).replace('₺', '')} TL`);
     });
 });
 

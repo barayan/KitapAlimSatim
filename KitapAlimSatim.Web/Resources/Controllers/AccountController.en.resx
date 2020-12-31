@@ -120,8 +120,14 @@
   <data name="EmailIsTaken" xml:space="preserve">
     <value>Email is taken</value>
   </data>
+  <data name="ErrorNameNull" xml:space="preserve">
+    <value>Name cannot be empty</value>
+  </data>
   <data name="InvalidCredentials" xml:space="preserve">
     <value>Email or password incorrect</value>
+  </data>
+  <data name="PasswordIncorrect" xml:space="preserve">
+    <value>Password incorret</value>
   </data>
   <data name="PasswordsNotMatch" xml:space="preserve">
     <value>Passwords not match</value>

@@ -117,14 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Cart" xml:space="preserve">
+    <value>Sepet</value>
+  </data>
   <data name="Home" xml:space="preserve">
     <value>Anasayfa</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Yükleniyor</value>
   </data>
   <data name="Login" xml:space="preserve">
     <value>Oturum aç</value>
   </data>
   <data name="Logout" xml:space="preserve">
     <value>Çıkış yap</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Profil</value>
   </data>
   <data name="SellBook" xml:space="preserve">
     <value>Kitap Sat</value>

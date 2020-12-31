@@ -1,0 +1,58 @@
+﻿@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
+@model IEnumerable<KitapAlimSatim.Web.Models.CartModel>
+@{
+    ViewData["Title"] = Localizer["Cart"];
+}
+<div class="row">
+    <div class="col-md-9">
+        <h2>@Localizer["Cart"] <span class="text-muted" style="font-size: 17px;"><span id="productCountTitle">@Model.Count()</span> @Localizer["product"]</span></h2>
+
+        @if (Model.Count() == 0)
+        {
+            <div class="alert alert-danger">@Localizer["CartEmpty"]</div>
+        }
+        else
+        {
+            <div style="margin-top: 30px;">
+                @foreach (var item in Model)
+                {
+                    <div style="margin-bottom: 20px; align-items: center" class="row">
+                        <div class="col-md-2" style="height: 100px; width: 100px;">
+                            <center>
+                                <img style="max-width: 100%;" src="~/media/image/@item.Product.Book.FileName" />
+                            </center>
+                        </div>
+                        <div class="col-md-9">
+                            <div style="font-weight: bold;"><a style="text-decoration: none;" asp-action="Index" asp-controller="Product" asp-route-productId="@item.Product.Id">@item.Product.Book.Name</a></div>
+                            <div class="small">
+                                <span class="text-muted">Satıcı</span>
+                                <span class="text-primary">@item.Product.User.Name</span>
+                            </div>
+                            <br />
+                            <span class="text-success">@item.Product.Price TL</span>
+                        </div>
+                        <div class="col-md-1" style="margin-top: 35px;">
+                            <button class="btn btn-sm btn-danger remove-product" data-pid="@item.Product.Id" data-price="@item.Product.Price">@Localizer["Delete"]</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+    <div class="col-md-3">
+        <div class="text-left" style="border: 1px solid grey; border-radius: 4px; padding: 15px 20px; margin-top: 20px;">
+            <h4 class="text-muted">@Localizer["SubTotal"]</h4>
+            <span id="subTotal" class="text-dark" style="font-size: 25px; font-weight: 500;">@ViewData["SubTotalDisplay"] TL</span>
+
+            <div style="margin-top: 30px;">
+                @{ 
+                    if (Model.Count() == 0) ViewData["disabled"] = "disabled";
+                }
+                <a style="text-decoration: none;" class="@ViewData["disabled"] form-control btn btn-success" asp-action="Checkout" asp-controller="Cart">@Localizer["Checkout"]</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var subtotal = @ViewData["SubTotal"];
+</script>

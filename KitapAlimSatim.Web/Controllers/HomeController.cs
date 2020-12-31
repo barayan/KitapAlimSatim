@@ -30,10 +30,10 @@ namespace KitapAlimSatim.Web.Controllers
             var model = from p in products
                         join b in books on p.BookId equals b.Id into table1
                         from b in table1.ToList()
-                        select new SearchModel
+                        select new ProductModel
                         {
-                            book = b,
-                            product = p
+                            Book = b,
+                            Product = p
                         };
             return View(model);
         }
@@ -47,6 +47,19 @@ namespace KitapAlimSatim.Web.Controllers
                     Expires = DateTimeOffset.Now.AddYears(10)
                 });
 
+            // Oturum açıksa kullanıcı dilini değiştirme
+            string login = HttpContext.Session.GetString("Login");
+            if(login != null)
+            {
+                var user = _kitapAlimSatimDbContext.User.Where(e => e.Email.Equals(login)).SingleOrDefault();
+                
+                if(user != null)
+                {
+                    user.Language = culture;
+                    _kitapAlimSatimDbContext.SaveChanges();
+                }
+            }
+            
             return Redirect(returnUrl);
         }
 
@@ -67,10 +80,10 @@ namespace KitapAlimSatim.Web.Controllers
             var model = from p in products
                         join b in books on p.BookId equals b.Id into table1
                         from b in table1.ToList()
-                        select new SearchModel
+                        select new ProductModel
                         {
-                            book = b,
-                            product = p
+                            Book = b,
+                            Product = p
                         };
             return View("Index", model);
         }

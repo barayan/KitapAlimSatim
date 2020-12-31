@@ -1,8 +1,11 @@
 ﻿@using KitapAlimSatim.Web.Models
+@using KitapAlimSatim.Data.Entities
+@inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 @model ProductModel
 
 @{ 
     ViewData["title"] = Model.Book.Name;
+    var comments = (List<CommentModel>)ViewData["comments"];
 }
 
 <div class="flex-row">
@@ -20,7 +23,7 @@
         <div style="line-height: 1.9em;" class="text-muted">
             <div class="row">
                 <div class="col-md-4">
-                    Yayınevi
+                    @Localizer["Publisher"]
                 </div>
                 <div class="col-md-8">
                     <b>@Model.Book.Publisher</b>
@@ -28,7 +31,7 @@
             </div>
             <div class="row">
                 <div class="col-md-4">
-                    Satıcı
+                    @Localizer["Seller"]
                 </div>
                 <div class="col-md-8">
                     <b>@Model.User.Name</b>
@@ -36,7 +39,7 @@
             </div>
             <div class="row">
                 <div class="col-md-4">
-                    Stok
+                    @Localizer["Stock"]
                 </div>
                 <div class="col-md-8">
                     <b>@Model.Stock</b>
@@ -48,10 +51,39 @@
         </h3>
         <br />
         <div id="addCart" style="width: 100%" class="btn btn-lg btn-success">
-            SEPETE EKLE
+            @Localizer["AddCart"]
         </div>
-        <h2>Kitap Hakkında</h2>
+        <h2>@Localizer["AboutBook"]</h2>
         <p>@Model.Book.Description</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-7">
+        <h2>@Localizer["Comments"]</h2>
+        <div style="margin-bottom: 69px;">
+            <form asp-action="Comment" asp-controller="Product" method="post">
+                <input type="hidden" name="productId" value="@Model.Id" />
+                <div class="form-group">
+                    <textarea rows="4" name="comment" class="form-control" placeholder="@Localizer["CommentPlaceholder"]"></textarea>
+                </div>
+                <input type="submit" class="btn btn-primary pull-right" value="@Localizer["Send"]" />
+            </form>
+        </div>
+        <hr />
+        @if (comments.Count == 0)
+        {
+            <div class="alert alert-success">@Localizer["FirstComment"]</div>   
+        }
+        <div>
+            @foreach (CommentModel item in comments)
+            {
+                <div style="font-family: system-ui" class="alert alert-success" role="alert">
+                    <div style="color: #161c2d;">@item.Message</div>
+                    <b class="text-muted small">@item.User.Name - @item.CreatedAt</b>
+                </div>
+            }
+        </div>
     </div>
 </div>
 <script type="text/javascript">

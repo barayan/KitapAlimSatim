@@ -1,0 +1,9 @@
+﻿@model KitapAlimSatim.Web.Models.CheckoutModel
+
+@if(Model.Success)
+{
+    <div class="alert alert-success">@Model.Message</div>
+}else
+{
+    <div class="alert alert-danger">@Model.Error</div>
+}
