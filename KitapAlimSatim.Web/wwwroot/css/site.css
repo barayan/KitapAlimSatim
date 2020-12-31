@@ -106,7 +106,7 @@ body {
     margin-left: 10px;
 }
 .culture-form select {
-    padding: 2px 5px;
+    display: inline-block;
 }
 
 /* Search panel */
@@ -118,10 +118,6 @@ body {
     margin-bottom: 20px
 }
 .search-panel input {
-    padding: 4px 14px;
-    border-radius: 9px;
-    border: 1px solid gray;
-    outline: none;
     width: 500px;
 }
 
@@ -277,8 +273,51 @@ body {
 
 a {
     text-decoration: none;
-    color: #2c7715;
+    color: inherit;
 }
+a:hover{
+    color: inherit;
+}
+
+.display-none {
+    display: none;
+}
+.not-visible {
+    visibility: hidden;
+}
+
+/* #region PROFILE CSS */
+.profile-panel {
+    transform: translateY(0%);
+}
+.fa-fw {
+    width: 2em;
+}
+.admin-menu a {
+    cursor: pointer;
+    user-select: none;
+}
+
+.admin-menu li.active a {
+    pointer-events: none;
+}
+.admin-menu li.disabled {
+    cursor: default;
+    pointer-events: none;
+}
+.form-save {
+    display: flex;
+    justify-content: space-between;
+    align-items: center
+}
+.form-save div {
+    display: flex;
+    align-items: center;
+}
+.form-save .display-none {
+    margin-right: 10px;
+}
+/* #endregion */
 
 /* responsive css */
 @media only screen and (max-width: 480px)

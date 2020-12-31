@@ -1,0 +1,59 @@
+﻿@using KitapAlimSatim.Web.Models
+@model ProductModel
+
+@{ 
+    ViewData["title"] = Model.Book.Name;
+}
+
+<div class="flex-row">
+    <div class="col-md-7">
+        <center>
+            <img style="height: 500px; max-width: 100%; max-height: 100%" src="~/media/image/@Model.Book.FileName" />
+        </center>
+    </div>
+    <div class="col-md-5">
+        <h3 style="margin: 0 0 5px">@Model.Book.Name</h3>
+        <div>
+            <b class="text-muted">@Model.Book.Author</b>
+        </div>
+        <br />
+        <div style="line-height: 1.9em;" class="text-muted">
+            <div class="row">
+                <div class="col-md-4">
+                    Yayınevi
+                </div>
+                <div class="col-md-8">
+                    <b>@Model.Book.Publisher</b>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    Satıcı
+                </div>
+                <div class="col-md-8">
+                    <b>@Model.User.Name</b>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    Stok
+                </div>
+                <div class="col-md-8">
+                    <b>@Model.Stock</b>
+                </div>
+            </div>
+        </div>
+        <h3 class="text-success">
+            @Model.Price TL
+        </h3>
+        <br />
+        <div id="addCart" style="width: 100%" class="btn btn-lg btn-success">
+            SEPETE EKLE
+        </div>
+        <h2>Kitap Hakkında</h2>
+        <p>@Model.Book.Description</p>
+    </div>
+</div>
+<script type="text/javascript">
+    var productId = @Model.Id;
+</script>

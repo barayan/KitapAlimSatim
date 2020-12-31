@@ -25,10 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Resources\Views\Admin\" />
     <Folder Include="Resources\Views\Product\" />
-    <Folder Include="Views\Admin\" />
-    <Folder Include="Views\Product\" />
   </ItemGroup>
 
   <ItemGroup>

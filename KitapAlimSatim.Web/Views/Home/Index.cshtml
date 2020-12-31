@@ -1,4 +1,4 @@
-﻿@model IEnumerable<KitapAlimSatim.Web.Models.SearchModel>
+﻿@model IEnumerable<KitapAlimSatim.Web.Models.ProductModel>
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 @{
     ViewData["Title"] = Localizer["HomePage"].Value;
@@ -12,16 +12,16 @@
     {
         <div class="book-item">
             <div class="book-item-div">
-                <a href="~/Product/@item.product.Id">
-                    <center>@item.book.Name</center>
-                    <img src="~/media/image/@item.book.FileName" />
+                <a href="~/Product/@item.Product.Id">
+                    <center>@item.Book.Name</center>
+                    <img src="~/media/image/@item.Book.FileName" />
                     <br />
                     <b>
-                        @item.book.Author
+                        @item.Book.Author
                         <br />
-                        @item.book.Publisher
+                        @item.Book.Publisher
                         <br />
-                        @item.product.Price TL
+                        @item.Product.Price TL
                     </b>
                 </a>
             </div>

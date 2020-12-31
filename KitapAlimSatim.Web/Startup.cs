@@ -98,6 +98,12 @@ namespace KitapAlimSatim.Web
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+                endpoints.MapControllerRoute(
+                    name: "product",
+                    pattern: "Product/{productId}",
+                    constraints: new { productId = "^\\d+$" },
+                    defaults: new { controller = "Product", action = "Index" });
             });
         }
     }

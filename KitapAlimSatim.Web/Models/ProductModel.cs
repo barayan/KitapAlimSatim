@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace KitapAlimSatim.Web.Models
 {
-    public class SearchModel
+    public class ProductModel : Product
     {
-        public Product product { get; set; }
-        public Book book { get; set; }
+        public Product Product { get; set; }
+        public Book Book { get; set; }
+
+        public User User { get; set; }
     }
 }
