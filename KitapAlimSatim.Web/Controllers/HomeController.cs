@@ -25,7 +25,7 @@ namespace KitapAlimSatim.Web.Controllers
 
         public IActionResult Index()
         {
-            List<Product> products = _kitapAlimSatimDbContext.Product.OrderByDescending(e => e.CreatedAt).Take(12).ToList();
+            List<Product> products = _kitapAlimSatimDbContext.Product.Where(e => e.IsActive == true).OrderByDescending(e => e.CreatedAt).Take(12).ToList();
             List<Book> books = _kitapAlimSatimDbContext.Book.ToList();
             var model = from p in products
                         join b in books on p.BookId equals b.Id into table1
@@ -71,7 +71,7 @@ namespace KitapAlimSatim.Web.Controllers
         [HttpPost]
         public IActionResult Search(string search)
         {
-            List<Product> products = _kitapAlimSatimDbContext.Product.OrderByDescending(e => e.CreatedAt).ToList();
+            List<Product> products = _kitapAlimSatimDbContext.Product.Where(e => e.IsActive == true).OrderByDescending(e => e.CreatedAt).ToList();
             List<Book> books = _kitapAlimSatimDbContext.Book.Where(
                 e => e.Name.ToLower().Contains(search.ToLower())
                 || e.Author.ToLower().Contains(search.ToLower())

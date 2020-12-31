@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Localization;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -34,6 +35,20 @@ namespace KitapAlimSatim.Web.Controllers
             {
                 user = _kitapAlimSatimDbContext.User.Where(e => e.Email.Equals(login)).SingleOrDefault();
             }
+        }
+
+        private string GenerateRandomString(int lenght = 10)
+        {
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var stringChars = new char[lenght];
+            var random = new Random();
+
+            for (int i = 0; i < stringChars.Length; i++)
+            {
+                stringChars[i] = chars[random.Next(chars.Length)];
+            }
+
+            return new String(stringChars);
         }
 
         public IActionResult Index()
@@ -196,20 +211,97 @@ namespace KitapAlimSatim.Web.Controllers
                                 .Where(e => e.product.UserId == user.Id).OrderByDescending(e => e.product.CreatedAt).ToList();
                         data = JsonConvert.SerializeObject(products);
                         break;
+                    case "delete":
+                        if(user.IsAdmin == true)
+                        {
+                            switch (model.Table)
+                            {
+                                case "kullanicilar":
+                                    var user = _kitapAlimSatimDbContext.User.Find(model.Id);
+                                    _kitapAlimSatimDbContext.User.Remove(user);
+                                    // cascade
+                                    var userComments = _kitapAlimSatimDbContext.Comment.Where(e => e.UserId == model.Id).ToList();
+                                    _kitapAlimSatimDbContext.Comment.RemoveRange(userComments);
+                                    //
+                                    var userProducts = _kitapAlimSatimDbContext.Product.Where(e => e.UserId == model.Id).ToList();
+                                    _kitapAlimSatimDbContext.Product.RemoveRange(userProducts);
+                                    //
+                                    var userOrders = _kitapAlimSatimDbContext.Order.Where(e => e.UserId == model.Id).ToList();
+                                    _kitapAlimSatimDbContext.Order.RemoveRange(userOrders);
+                                    break;
+                                case "kitaplar":
+                                    var book = _kitapAlimSatimDbContext.Book.Find(model.Id);
+                                    _kitapAlimSatimDbContext.Book.Remove(book);
+                                    // cascade
+                                    var bookProducts = _kitapAlimSatimDbContext.Product.Where(e => e.BookId == model.Id).ToList();
+                                    _kitapAlimSatimDbContext.Product.RemoveRange(bookProducts);
+                                    break;
+                                case "siparisler":
+                                    var order = _kitapAlimSatimDbContext.Order.Find(model.Id);
+                                    _kitapAlimSatimDbContext.Order.Remove(order);
+                                    break;
+                                case "yorumlar":
+                                    var comment = _kitapAlimSatimDbContext.Comment.Find(model.Id);
+                                    _kitapAlimSatimDbContext.Comment.Remove(comment);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        switch (model.Table)
+                        {
+                            case "urunler":
+                            case "satislarim":
+                                var product = _kitapAlimSatimDbContext.Product.Find(model.Id);
+                                if(user.IsAdmin == true || product.UserId == user.Id)
+                                {
+                                    _kitapAlimSatimDbContext.Product.Remove(product);
+                                    // cascade
+                                    var productComments = _kitapAlimSatimDbContext.Comment.Where(e => e.ProductId == model.Id).ToList();
+                                    _kitapAlimSatimDbContext.Comment.RemoveRange(productComments);
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case "active":
+                        switch (model.Table)
+                        {
+                            case "urunler":
+                            case "satislarim":
+                                var product = _kitapAlimSatimDbContext.Product.Find(model.Id);
+                                if (user.IsAdmin == true || product.UserId == user.Id)
+                                {
+                                    product.IsActive = !product.IsActive;
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+                        break;
+                    case "admin":
+                        var u = _kitapAlimSatimDbContext.User.Find(model.Id);
+                        if (u != null && user.IsAdmin == true)
+                        {
+                            u.IsAdmin = !u.IsAdmin;
+                        }
+                        break;
                     default:
                         break;
                 }
+                _kitapAlimSatimDbContext.SaveChanges();
                 // Admin istekleri
-                if(user.IsAdmin == true)
+                if (user.IsAdmin == true)
                 {
                     switch (model.Request)
                     {
                         case "kullanicilar":
-                            var users = _kitapAlimSatimDbContext.User.OrderByDescending(e => e.CreatedAt).ToList();
+                            var users = _kitapAlimSatimDbContext.User.OrderByDescending(e => e.Id).ToList();
                             data = JsonConvert.SerializeObject(users);
                             break;
                         case "kitaplar":
-                            var books = _kitapAlimSatimDbContext.Book.OrderByDescending(e => e.CreatedAt).ToList();
+                            var books = _kitapAlimSatimDbContext.Book.OrderByDescending(e => e.Id).ToList();
                             data = JsonConvert.SerializeObject(books);
                             break;
                         case "urunler":
@@ -227,9 +319,15 @@ namespace KitapAlimSatim.Web.Controllers
                                 var user = _kitapAlimSatimDbContext.User.Find(item.UserId);
                                 if (user == null || item.OrderItems == null) continue;
                                 var orderItems = JsonConvert.DeserializeObject<List<ProductModel>>(item.OrderItems);
+                                // içini doldurma
+                                foreach (var oitem in orderItems)
+                                {
+                                    oitem.User = _kitapAlimSatimDbContext.User.Find(oitem.UserId);
+                                    oitem.Book = _kitapAlimSatimDbContext.Book.Find(oitem.BookId);
+                                }
                                 var orderItem = JsonConvert.DeserializeObject<OrderModel>(JsonConvert.SerializeObject(item));
                                 orderItem.OrderItemList = orderItems;
-                                orderItem.User = user;
+                                orderItem.User = _kitapAlimSatimDbContext.User.Find(item.UserId);
                                 list.Add(orderItem);
                             }
                             data = JsonConvert.SerializeObject(list);
@@ -248,7 +346,7 @@ namespace KitapAlimSatim.Web.Controllers
                                 commentItem.Product.Book = _kitapAlimSatimDbContext.Book.Find(commentItem.Product.BookId);
                                 commentList.Add(commentItem);
                             }
-                            data = JsonConvert.SerializeObject(comments);
+                            data = JsonConvert.SerializeObject(commentList);
                             break;
                         default:
                             break;
@@ -257,6 +355,45 @@ namespace KitapAlimSatim.Web.Controllers
             }
             data = "{\"success\": " + (success ? "true" : "false") + ", \"data\": " + data + ", \"error\": \"" + error + "\"}";
             return Content(data, "application/json");
+        }
+
+
+        [HttpPost]
+        public IActionResult Post(BookModel model)
+        {
+            if (model.Image != null)
+            {
+
+                //Set Key Name
+                string extension = Path.GetExtension(model.Image.FileName);
+                string ImageName = Guid.NewGuid().ToString(), SavePath;
+
+                string random = ImageName + extension;
+                while(true)
+                {
+                    // Get url To Save
+                    SavePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/media/image", random);
+                    // Bu isimle dosya yoksa devam et
+                    if (!System.IO.File.Exists(SavePath)) break;
+                    random = GenerateRandomString(ImageName.Length) + extension;
+                }
+
+                _kitapAlimSatimDbContext.Book.Add(new Book
+                {
+                    Author = model.Author,
+                    Description = model.Description,
+                    FileName = random,
+                    Name = model.Name,
+                    Publisher = model.Publisher
+                });
+
+                using (var stream = new FileStream(SavePath, FileMode.Create))
+                {
+                    model.Image.CopyTo(stream);
+                    _kitapAlimSatimDbContext.SaveChanges();
+                }
+            }
+            return RedirectToAction("Index");
         }
     }
 }

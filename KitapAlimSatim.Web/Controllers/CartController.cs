@@ -75,6 +75,7 @@ namespace KitapAlimSatim.Web.Controllers
                 var cookie = HttpContext.Request.Cookies[cname];
                 if (cookie == null) cookie = "[]";
                 var items = JsonConvert.DeserializeObject<int[]>(Uri.UnescapeDataString(cookie));
+                if(items.Length == 0) return RedirectToAction("Index", "Home");
                 var products = _kitapAlimSatimDbContext.Product.Where(e => items.Contains(e.Id)).ToList();
                 double subtotal = 0;
                 List<ProductModel> orderItems = new List<ProductModel>();
@@ -83,6 +84,7 @@ namespace KitapAlimSatim.Web.Controllers
                     subtotal += item.Price;
                     var pModel = JsonConvert.DeserializeObject<ProductModel>(JsonConvert.SerializeObject(item));
                     orderItems.Add(pModel);
+                    item.IsActive = false;
                 }
                 var order = new Order
                 {

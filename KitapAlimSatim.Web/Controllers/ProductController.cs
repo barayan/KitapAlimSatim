@@ -59,19 +59,19 @@ namespace KitapAlimSatim.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(int book, int price, int stock)
+        public IActionResult Add(int book, double price)
         {
             GetUser();
             List<Book> model = _kitapAlimSatimDbContext.Book.ToList();
 
             bool bookExist = _kitapAlimSatimDbContext.Book.Find(book) != null;
-            if (bookExist && price > 0 && stock >= 1 && user != null)
+            if (bookExist && price > 0 && user != null)
             {
                 _kitapAlimSatimDbContext.Product.Add(new Product
                 {
                     BookId = book,
                     Price = price,
-                    Stock = stock,
+                    Stock = 1,
                     UserId = user.Id
                 });
                 _kitapAlimSatimDbContext.SaveChanges();

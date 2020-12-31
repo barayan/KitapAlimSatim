@@ -117,8 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AddBook" xml:space="preserve">
+    <value>Add Book</value>
+  </data>
   <data name="Address" xml:space="preserve">
     <value>Address</value>
+  </data>
+  <data name="Author" xml:space="preserve">
+    <value>Author</value>
   </data>
   <data name="Books" xml:space="preserve">
     <value>Books</value>
@@ -132,8 +138,14 @@
   <data name="ConfirmNewPassword" xml:space="preserve">
     <value>Confirm new password</value>
   </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
   <data name="Error" xml:space="preserve">
     <value>Error</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>Image</value>
   </data>
   <data name="Name" xml:space="preserve">
     <value>Name</value>
@@ -153,11 +165,17 @@
   <data name="Products" xml:space="preserve">
     <value>Products</value>
   </data>
+  <data name="Publisher" xml:space="preserve">
+    <value>Publisher</value>
+  </data>
   <data name="Save" xml:space="preserve">
     <value>Save</value>
   </data>
   <data name="Saved" xml:space="preserve">
     <value>Saved</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Send</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Settings</value>

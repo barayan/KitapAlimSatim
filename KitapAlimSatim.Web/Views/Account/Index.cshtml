@@ -91,6 +91,216 @@
         <div class="col-md-9 well admin-content" id="yorumlar">
             Yorumlar
         </div>
+        <div class="col-md-9 well admin-content" data-loading="false" id="kitapEkle">
+            <form asp-action="Post" asp-controller="Account" enctype="multipart/form-data" method="post">
+                <h3>@Localizer["AddBook"]</h3>
+                <div class="form-group">
+                    <label for="Name">@Localizer["Name"]</label>
+                    <input type="text" name="Name" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="Author">@Localizer["Author"]</label>
+                    <input type="text" name="Author" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="Publisher">@Localizer["Publisher"]</label>
+                    <input type="text" name="Publisher" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="Description">@Localizer["Description"]</label>
+                    <textarea class="form-control" name="Description" rows="5"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="Image">@Localizer["Image"]</label>
+                    <input type="file" name="Image" class="form-control" accept="image/*" />
+                </div>
+                <input type="submit" class="btn btn-primary" value="@Localizer["Send"]" />
+            </form>
+        </div>
+        <!--ADMIN ÖZEL SCRIPT-->
+<script type="text/javascript">
+            // Daha sonra ajax fonksiyonunda çağırmak üzere oluşturduğumuz fonksiyon. Kodların diğer kullanıcılara gözükmemesi için böyle yapıyoruz.
+            function qrXc(req, json) {
+                var div = $('<div/>'), table = $('<table/>'), thead, tbody = $('<tbody/>'), action;
+                switch (req) {
+                    case "kullanicilar":
+                        // headerlar
+                        var columns = ["#", "Name", "Email", "Password", "IsAdmin", "Address"];
+                        columns = columns.concat(globalColumns);
+                        columns.push("Action");
+                        thead = getTableHead(columns);
+                        // satırlar
+                        for (var ix in json.data) {
+                            var model = json.data[ix];
+
+                            action = "<div class='btn btn-xs btn-success ajax-action' data-req='admin'>@Localizer["Admin"]</div><div class='btn btn-xs btn-danger ajax-action' data-req='delete'>@Localizer["Delete"]</div>";
+
+                            var values = [
+                                model.Id,
+                                model.Name,
+                                model.Email,
+                                model.Password,
+                                model.IsAdmin,
+                                model.Address,
+                                model.CreatedAt,
+                                model.UpdatedAt,
+                                action
+                            ];
+                            tbody.append(getTableRow(values));
+                        }
+                        break;
+                    case "kitaplar":
+                        // headerlar
+                        var columns = ["#", "Name", "Author", "Image", "Description", "Publisher"];
+                        columns = columns.concat(globalColumns);
+                        columns.push("Action");
+                        thead = getTableHead(columns);
+                        // satırlar
+                        for (var ix in json.data) {
+                            var model = json.data[ix];
+
+                            var image = `<a href="/media/image/${model.FileName}" target="_blank">${model.FileName}</a>`;
+                            action = "<div class='btn btn-xs btn-danger ajax-action' data-req='delete'>@Localizer["Delete"]</div>";
+
+                            var values = [
+                                model.Id,
+                                model.Name,
+                                model.Author,
+                                image,
+                                model.Description,
+                                model.Publisher,
+                                model.CreatedAt,
+                                model.UpdatedAt,
+                                action
+                            ];
+                            tbody.append(getTableRow(values));
+                        }
+                        div.append('<div class="btn btn-primary btn-sm admin-menu-title" data-target-id="kitapEkle">@Localizer["AddBook"]</div>');
+                        break;
+                    case "urunler":
+                        // headerlar
+                        var columns = ["#", "Name", "Seller", "Price", "Stock", "IsActive"];
+                        columns = columns.concat(globalColumns);
+                        columns.push("Action");
+                        thead = getTableHead(columns);
+                        // satırlar
+                        for (var ix in json.data) {
+                            var model = json.data[ix],
+                                p = model.product.product,
+                                b = model.product.book,
+                                u = model.user;
+
+                            var bookName = `<a href="/Product/${p.Id}">${b.Name}</a>`;
+                            action = "<div class='btn btn-xs btn-primary ajax-action' data-req='active'>@Localizer["Active"]</div><div class='btn btn-xs btn-danger ajax-action' data-req='delete'>@Localizer["Delete"]</div>";
+
+                            var values = [
+                                p.Id,
+                                bookName,
+                                u.Name,
+                                p.Price + " TL",
+                                p.Stock,
+                                p.IsActive,
+                                p.CreatedAt,
+                                p.UpdatedAt,
+                                action
+                            ];
+                            tbody.append(getTableRow(values));
+                        }
+                        break;
+                    case "satislarim":
+                        // headerlar
+                        var columns = ["#", "Name", "Price", "Stock", "IsActive"];
+                        columns = columns.concat(globalColumns);
+                        columns.push("Action");
+                        thead = getTableHead(columns);
+                        // satırlar
+                        for (var ix in json.data) {
+                            var model = json.data[ix];
+
+                            var bookName = `<a href="/Product/${model.product.Id}">${model.book.Name}</a>`;
+                            action = "<div class='btn btn-xs btn-primary ajax-action' data-req='active'>@Localizer["Active"]</div><div class='btn btn-xs btn-danger ajax-action' data-req='delete'>@Localizer["Delete"]</div>";
+
+                            var values = [
+                                model.product.Id,
+                                bookName,
+                                model.product.Price + " TL",
+                                model.product.Stock,
+                                model.product.IsActive,
+                                model.product.CreatedAt,
+                                model.product.UpdatedAt,
+                                action
+                            ];
+                            tbody.append(getTableRow(values));
+                        }
+                        break;
+                    case "siparisler":
+                    case "siparislerim":
+                        // headerlar
+                        var columns = ["#", "Products", "User", "SubTotal"];
+                        columns = columns.concat(globalColumns);
+                        columns.push("Action");
+                        thead = getTableHead(columns);
+                        // satırlar
+                        for (var ix in json.data) {
+                            var model = json.data[ix];
+                            var products = "";
+
+                            for (ix in model.OrderItemList) {
+                                var orderModel = model.OrderItemList[ix],
+                                    product;
+
+                                product = `<a href="/Product/${orderModel.Id}">${orderModel.Book.Name} (${orderModel.Price} TL)</a>`;
+                                products += product + "<br />";
+                            }
+
+                            action = "<div class='btn btn-xs btn-danger ajax-action' data-req='delete'>@Localizer["Delete"]</div>";
+
+                            var values = [
+                                model.Id,
+                                products,
+                                model.User.Name,
+                                model.SubTotal,
+                                model.CreatedAt,
+                                model.UpdatedAt,
+                                action
+                            ];
+                            tbody.append(getTableRow(values));
+                        }
+                        break;
+                    case "yorumlar":
+                        // headerlar
+                        var columns = ["#", "Comment", "User", "Product"];
+                        columns = columns.concat(globalColumns);
+                        columns.push("Action");
+                        thead = getTableHead(columns);
+                        // satırlar
+                        for (var ix in json.data) {
+                            var model = json.data[ix],
+                                c = model,
+                                p = model.Product,
+                                b = model.Product.Book,
+                                u = model.User;
+
+                            var product = `<a href="/Product/${p.Id}">${b.Name}</a>`;
+                            action = "<div class='btn btn-xs btn-danger ajax-action' data-req='delete'>@Localizer["Delete"]</div>";
+
+                            var values = [
+                                c.Id,
+                                c.Message,
+                                u.Name,
+                                product,
+                                c.CreatedAt,
+                                c.UpdatedAt,
+                                action
+                            ];
+                            tbody.append(getTableRow(values));
+                        }
+                        break;
+                    default:
+                }
+                table.append(thead).append(tbody);
+                return div.append(table);
+            }
+</script>
     }
 </div>
-

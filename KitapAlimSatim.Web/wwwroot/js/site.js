@@ -7,42 +7,17 @@ var ajaxState = false;
 var saveButtons;
 var ajaxSuccess = false;
 var jsonData;
+var globalColumns = ["CreatedAt", "UpdatedAt"];
+var _localizer = [];
+//
+
 
 $(document).ready(function () {
     // profil sayfası
-    var navItems = $('.admin-menu li > a');
-    var navListItems = $('.admin-menu li');
-    var allWells = $('.admin-content');
     var allWellsExceptFirst = $('.admin-content:not(:first)');
     saveButtons = $('.form-save button');
-
     allWellsExceptFirst.hide();
-    navItems.click(function (e) {
-        e.preventDefault();
-        navListItems.removeClass('active');
-        $(this).closest('li').addClass('active');
-
-        allWells.hide();
-        var targetId = $(this).attr('data-target-id');
-        target = $('#' + targetId).show();
-        if (target.data('loading') != false) {
-            target.html(`${loadingDisplay}..`);
-            // ajax
-            ajax(targetId);
-        }
-    });
-    saveButtons.click(function () {
-        var self = $(this), data = { Action: self.data('action') },
-            form = self.parents('form'),
-            formSave = form.find('.form-save'),
-            inputs = form.find('textarea,input');
-        saveButtons.attr('disabled', true);
-        inputs.each(function () {
-            var self = $(this);
-            data[self.attr('name')] = self.val();
-        });
-        ajax('ayarlar', data, formSave);
-    });
+    listenAgain();
     // login sayfası
     $('.login-info-box').fadeOut();
     $('.login-show').addClass('show-log-panel');
@@ -94,6 +69,11 @@ $(document).ready(function () {
         subtotal -= parseFloat(self.data('price'));
         $('#subTotal').html(`${Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(subtotal).replace('₺', '')} TL`);
     });
+    // js içinde localizer erişimi
+    for (var ix in localizer) {
+        var item = localizer[ix];
+        _localizer[item.Name] = item.Value;
+    }
 });
 
 
@@ -121,49 +101,7 @@ function getCookie(cname) {
     return "";
 }
 
-// 
-function buildHtmlTable(myList) {
-    var table = $('<table/>'),
-        thead = $('<thead/>'),
-        tbody = $('<tbody/>');
-    var columns = addAllColumnHeaders(myList, thead);
-
-    table.attr('class', 'table table-striped');
-
-    for (var i = 0; i < myList.length; i++) {
-        var row$ = $('<tr/>');
-        for (var colIndex = 0; colIndex < columns.length; colIndex++) {
-            var cellValue = myList[i][columns[colIndex]];
-            if (cellValue == null) cellValue = "";
-            row$.append($('<td/>').html(cellValue));
-        }
-        tbody.append(row$);
-    }
-    table.append(thead).append(tbody);
-    return table;
-}
-
-// Adds a header row to the table and returns the set of columns.
-// Need to do union of keys from all records as some records may not contain
-// all records.
-function addAllColumnHeaders(myList, selector) {
-    var columnSet = [];
-    var headerTr$ = $('<tr/>');
-
-    for (var i = 0; i < myList.length; i++) {
-        var rowHash = myList[i];
-        for (var key in rowHash) {
-            if ($.inArray(key, columnSet) == -1) {
-                columnSet.push(key);
-                headerTr$.append($('<th/>').html(key));
-            }
-        }
-    }
-   selector.append(headerTr$);
-
-    return columnSet;
-}
-
+// profil sayfası için ajax çağrılarını gerçekleştiren fonksiyon
 function ajax(req, data = {}, item = null) {
     if (ajaxState != false) ajaxState.abort;
     data.Request = req;
@@ -172,8 +110,76 @@ function ajax(req, data = {}, item = null) {
         if (json.success) {
             if (data.Action == 'ChangePassword') {
                 item.parents('form').find('input').val('');
+            } else if (typeof data.Action === "undefined") {
+                var table = $('<table/>'), thead, tbody = $('<tbody/>'), cnt = $('#' + req);
+                if (typeof qrXc === "function") {
+                    table = qrXc(req, json);
+                } else {
+                    switch (data.Request) {
+                        case "siparislerim":
+                            // headerlar
+                            var columns = ["#", "Products", "SubTotal"];
+                            columns = columns.concat(globalColumns);
+                            thead = getTableHead(columns);
+                            // satırlar
+                            for (var ix in json.data) {
+                                var model = json.data[ix];
+                                var products = "";
+
+                                for (ix in model.OrderItemList) {
+                                    var orderModel = model.OrderItemList[ix],
+                                        product;
+
+                                    product = `<a href="/Product/${orderModel.Id}">${orderModel.Book.Name} (${orderModel.Price} TL)</a>`;
+                                    products += product + "<br />";
+                                }
+
+                                var values = [
+                                    model.Id,
+                                    products,
+                                    model.SubTotal,
+                                    model.CreatedAt,
+                                    model.UpdatedAt
+                                ];
+                                tbody.append(getTableRow(values));
+                            }
+                            break;
+                        case "satislarim":
+                            // headerlar
+                            var columns = ["#", "Name", "Price", "Stock", "IsActive"];
+                            columns = columns.concat(globalColumns);
+                            columns.push("Action");
+                            thead = getTableHead(columns);
+                            // satırlar
+                            for (var ix in json.data) {
+                                var model = json.data[ix];
+
+                                var bookName = `<a href="/Product/${model.product.Id}">${model.book.Name}</a>`;
+                                action = `<div class='btn btn-xs btn-primary ajax-action' data-action='active'>${_localizer["Active"]}</div><div class='btn btn-xs btn-danger ajax-action' data-action='delete'>${_localizer["Delete"]}</div>`;
+
+                                var values = [
+                                    model.product.Id,
+                                    bookName,
+                                    model.product.Price + " TL",
+                                    model.product.Stock,
+                                    model.product.IsActive,
+                                    model.product.CreatedAt,
+                                    model.product.UpdatedAt,
+                                    action
+                                ];
+                                tbody.append(getTableRow(values));
+                            }
+                            break;
+                        default:
+                    }
+                    table.append(thead).append(tbody);
+                }
+                if (!table.is('table')) table.find('table').attr('class', 'table table-striped');
+                else table.attr('class', 'table table-striped');
+                cnt.html(table);
+                if (json.data.length == 0) cnt.html(_localizer["NoRecordsFound"]);
             }
-            $('#' + req).html(buildHtmlTable(json.data));
+            listenAgain();
         }
     }, 'json').always(function (response) {
         saveButtons.attr('disabled', false);
@@ -189,6 +195,89 @@ function ajax(req, data = {}, item = null) {
         console.log(response);
     });
     ajaxSuccess = false;
+}
+
+// verilen diziyi tablo headerı olarak döndüren fonksiyon
+function getTableHead(columns) {
+    if (typeof localizer === "undefined") return null;
+
+    var thead = $('<thead/>'), tr = $('<tr/>'), th, title;
+    for (var ix in columns) {
+        th = $('<th/>');
+        title = _localizer[columns[ix]];
+        if (title === undefined) title = columns[ix];
+        th.html(title)
+        tr.append(th);
+    }
+    return thead.append(tr);
+}
+
+// verilen diziyi tablo satırı olarak döndüren fonksiyon
+function getTableRow(values) {
+    var tr = $('<tr/>'), td, val;
+    for (var ix in values) {
+        td = $('<td/>');
+        // true veya false ise 
+        val = values[ix];
+        if (val === true) val = _localizer["Yes"];
+        else if (val === false) val = _localizer["No"];
+        //
+        td.html(val);
+        tr.append(td);
+    }
+    return tr;
+}
+
+// elementler güncellediğinde eventlerin çalışması için tekrar çağırılan fonksiyon
+function listenAgain() {
+    var navItems = $('.admin-menu li > a, .admin-menu-title');
+    var navListItems = $('.admin-menu li');
+    var allWells = $('.admin-content');
+    var allWellsExceptFirst = $('.admin-content:not(:first)');
+    var ajaxActions = $('.ajax-action');
+
+    navItems.unbind().click(function (e) {
+        e.preventDefault();
+        navListItems.removeClass('active');
+        $(this).closest('li').addClass('active');
+
+        allWells.hide();
+        var targetId = $(this).attr('data-target-id');
+        target = $('#' + targetId).show();
+        if (target.data('loading') != false) {
+            target.html(`${loadingDisplay}..`);
+            // ajax
+            ajax(targetId);
+        }
+    });
+    saveButtons.unbind().click(function () {
+        var self = $(this), data = { Action: self.data('action') },
+            form = self.parents('form'),
+            formSave = form.find('.form-save'),
+            inputs = form.find('textarea,input');
+        saveButtons.attr('disabled', true);
+        inputs.each(function () {
+            var self = $(this);
+            data[self.attr('name')] = self.val();
+        });
+        ajax('ayarlar', data, formSave);
+    });
+    // actions
+    ajaxActions.unbind().click(function () {
+        var self = $(this), req = self.data('req'),
+            cnt = self.parents('.admin-content'), table = cnt.attr('id'),
+            actionId = self.parents('tr').find('td:eq(0)').text();
+
+        var data = {
+            Request: req,
+            Id: actionId,
+            Table: table
+        };
+        self.attr('disabled', true);
+        $.post('/Account/Get', data).always(function () {
+            ajax(table);
+        });
+    });
 }
 
 $('.login-reg-panel input[type="radio"]').on('change', function () {

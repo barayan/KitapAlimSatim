@@ -15,5 +15,7 @@ namespace KitapAlimSatim.Web.Models
         public string NewPassword { get; set; }
 
         public string ConfirmNewPassword { get; set; }
+
+        public string Table { get; set; }
     }
 }

@@ -117,8 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AddBook" xml:space="preserve">
+    <value>Kitap Ekle</value>
+  </data>
   <data name="Address" xml:space="preserve">
     <value>Adres</value>
+  </data>
+  <data name="Author" xml:space="preserve">
+    <value>Yazar</value>
   </data>
   <data name="Books" xml:space="preserve">
     <value>Kitaplar</value>
@@ -132,8 +138,14 @@
   <data name="ConfirmNewPassword" xml:space="preserve">
     <value>Yeni parola onayla</value>
   </data>
+  <data name="Description" xml:space="preserve">
+    <value>Açıklama</value>
+  </data>
   <data name="Error" xml:space="preserve">
     <value>Hata</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>Resim</value>
   </data>
   <data name="Name" xml:space="preserve">
     <value>İsim</value>
@@ -153,11 +165,17 @@
   <data name="Products" xml:space="preserve">
     <value>Ürünler</value>
   </data>
+  <data name="Publisher" xml:space="preserve">
+    <value>Yayınevi</value>
+  </data>
   <data name="Save" xml:space="preserve">
     <value>Kaydet</value>
   </data>
   <data name="Saved" xml:space="preserve">
     <value>Kaydedildi</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Gönder</value>
   </data>
   <data name="Settings" xml:space="preserve">
     <value>Ayarlar</value>

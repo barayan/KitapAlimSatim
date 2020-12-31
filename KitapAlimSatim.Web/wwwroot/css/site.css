@@ -17,6 +17,10 @@ textarea {
     min-width: 100%;
 }
 
+pre {
+    white-space: pre-wrap;
+}
+
 .btn-primary {
   color: #fff;
   background-color: #1b6ec2;

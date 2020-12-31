@@ -97,6 +97,7 @@
     <script src="~/lib/bootstrap/3.4.1-dist/js/bootstrap.min.js"></script>
     <script type="text/javascript">
         var loadingDisplay = "@Localizer["Loading"].Value";
+        var localizer = JSON.parse('@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Localizer.GetAllStrings(false).ToList()))');
     </script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
