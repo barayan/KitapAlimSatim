@@ -25,8 +25,11 @@ namespace KitapAlimSatim.Web.Controllers
 
         public IActionResult Index()
         {
+            // aktif olan ürünleri oluşturma tarihine göre azalan şekilde getir. 
             List<Product> products = _kitapAlimSatimDbContext.Product.Where(e => e.IsActive == true).OrderByDescending(e => e.CreatedAt).Take(12).ToList();
             List<Book> books = _kitapAlimSatimDbContext.Book.ToList();
+
+            // modele uygun hale getiren sorgu
             var model = from p in products
                         join b in books on p.BookId equals b.Id into table1
                         from b in table1.ToList()
@@ -41,9 +44,11 @@ namespace KitapAlimSatim.Web.Controllers
         [HttpPost]
         public IActionResult CultureManager(string culture, string returnUrl)
         {
+            // Dil fonksiyonu
             Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName, CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
                 new CookieOptions
                 {
+                    // 10 yıl cookie süresi
                     Expires = DateTimeOffset.Now.AddYears(10)
                 });
 
@@ -71,12 +76,14 @@ namespace KitapAlimSatim.Web.Controllers
         [HttpPost]
         public IActionResult Search(string search)
         {
+            // aktif olan ürünleri oluşturma tarihine göre azalan şekilde getir. 
             List<Product> products = _kitapAlimSatimDbContext.Product.Where(e => e.IsActive == true).OrderByDescending(e => e.CreatedAt).ToList();
             List<Book> books = _kitapAlimSatimDbContext.Book.Where(
                 e => e.Name.ToLower().Contains(search.ToLower())
                 || e.Author.ToLower().Contains(search.ToLower())
                 || e.Publisher.ToLower().Contains(search.ToLower())).Take(12).ToList();
 
+            // modele uygun hale getiren sorgu
             var model = from p in products
                         join b in books on p.BookId equals b.Id into table1
                         from b in table1.ToList()

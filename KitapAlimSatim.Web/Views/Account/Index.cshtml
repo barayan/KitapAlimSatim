@@ -1,10 +1,10 @@
 ﻿@using KitapAlimSatim.Data.Entities
-@model IEnumerable<User>
+@model User
 @inject Microsoft.AspNetCore.Mvc.Localization.IViewLocalizer Localizer
 
 @{
-    User user = Model.First();
-    ViewData["Title"] = user.Name;
+    User user = Model;
+    ViewData["Title"] = Model.Name;
 }
 <div class="row profile-panel">
     <div class="col-md-3">

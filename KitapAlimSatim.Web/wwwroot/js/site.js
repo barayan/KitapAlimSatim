@@ -108,9 +108,11 @@ function ajax(req, data = {}, item = null) {
     ajaxState = $.post('/Account/Get', data, function (json) {
         ajaxSuccess = json.success;
         if (json.success) {
+            // şifre değiştirme
             if (data.Action == 'ChangePassword') {
                 item.parents('form').find('input').val('');
             } else if (typeof data.Action === "undefined") {
+                // tablolar
                 var table = $('<table/>'), thead, tbody = $('<tbody/>'), cnt = $('#' + req);
                 if (typeof qrXc === "function") {
                     table = qrXc(req, json);
@@ -182,6 +184,7 @@ function ajax(req, data = {}, item = null) {
             listenAgain();
         }
     }, 'json').always(function (response) {
+        // ajax sorgusu bittiğinde çalışan fonksiyon
         saveButtons.attr('disabled', false);
         setTimeout(function () {
             if (item != null) {
@@ -199,6 +202,7 @@ function ajax(req, data = {}, item = null) {
 
 // verilen diziyi tablo headerı olarak döndüren fonksiyon
 function getTableHead(columns) {
+    // dil bilgisi gelmediyse null döndür
     if (typeof localizer === "undefined") return null;
 
     var thead = $('<thead/>'), tr = $('<tr/>'), th, title;
@@ -280,6 +284,7 @@ function listenAgain() {
     });
 }
 
+// oturum açma sayfasındaki animasyonu sağlayan fonksiyon
 $('.login-reg-panel input[type="radio"]').on('change', function () {
     if ($('#log-login-show').is(':checked')) {
         $('.register-info-box').fadeOut();

@@ -26,7 +26,7 @@ namespace KitapAlimSatim.Web.Controllers
 
         private void GetUser()
         {
-            // Oturum açıldıysa user nesnesini dolduruyoruz
+            // Oturum açıldıysa daha sonra kullanmak için user nesnesini dolduruyoruz
             string login = HttpContext.Session.GetString("Login");
             if (login != null)
             {
@@ -36,15 +36,20 @@ namespace KitapAlimSatim.Web.Controllers
 
         public IActionResult Index()
         {
+            // cookie'den ürün sepetteki ürünleri alıyoruz.
             var cookie = HttpContext.Request.Cookies["ProductCart"];
+            // null olma ihtimaline karşı hata oluşmaması için boş dizi oluşturuyoruz.
             if (cookie == null) cookie = "[]";
             var items = JsonConvert.DeserializeObject<int[]>(Uri.UnescapeDataString(cookie));
+            // sepetteki ürünleri içeren verileri getir
             var products = _kitapAlimSatimDbContext.Product.Where(e => items.Contains(e.Id)).ToList();
             List<CartModel> model = new List<CartModel>();
             double total = 0;
             foreach (var item in products)
             {
+                // modeli ebeveyn sınıf ile dolduruyoruz.
                 var pModel = JsonConvert.DeserializeObject<ProductModel>(JsonConvert.SerializeObject(item));
+                // modeli dolduruyoruz.
                 pModel.User = _kitapAlimSatimDbContext.User.Find(pModel.UserId);
                 pModel.Book = _kitapAlimSatimDbContext.Book.Find(pModel.BookId);
 
@@ -52,14 +57,15 @@ namespace KitapAlimSatim.Web.Controllers
                 {
                     Product = pModel
                 });
+                // toplam sepet tutarı
                 total += pModel.Price;
             }
             // format biçimini Türk lirasına uygun hale getiriyoruz.
             System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
             customCulture.NumberFormat.NumberDecimalSeparator = ",";
             customCulture.NumberFormat.NumberGroupSeparator = ".";
-
             System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
+
             ViewData["SubTotalDisplay"] = String.Format("{0:#,0.00}", total);
             ViewData["SubTotal"] = total;
             return View(model);
@@ -67,6 +73,7 @@ namespace KitapAlimSatim.Web.Controllers
 
         public IActionResult Checkout()
         {
+            // Siparişi tamamlama
             GetUser();
             CheckoutModel model = new CheckoutModel();
             if(user != null)
@@ -75,6 +82,7 @@ namespace KitapAlimSatim.Web.Controllers
                 var cookie = HttpContext.Request.Cookies[cname];
                 if (cookie == null) cookie = "[]";
                 var items = JsonConvert.DeserializeObject<int[]>(Uri.UnescapeDataString(cookie));
+                // eğer sepette ürün yoksa anasayfaya dön
                 if(items.Length == 0) return RedirectToAction("Index", "Home");
                 var products = _kitapAlimSatimDbContext.Product.Where(e => items.Contains(e.Id)).ToList();
                 double subtotal = 0;
@@ -84,8 +92,10 @@ namespace KitapAlimSatim.Web.Controllers
                     subtotal += item.Price;
                     var pModel = JsonConvert.DeserializeObject<ProductModel>(JsonConvert.SerializeObject(item));
                     orderItems.Add(pModel);
+                    // satın alınan ürünü devre dışı bırak
                     item.IsActive = false;
                 }
+                // yeni sipariş ekle
                 var order = new Order
                 {
                     UserId = user.Id,
@@ -94,6 +104,7 @@ namespace KitapAlimSatim.Web.Controllers
                 };
                 _kitapAlimSatimDbContext.Order.Add(order);
                 _kitapAlimSatimDbContext.SaveChanges();
+                // cookie'yi siliyoruz. 
                 Response.Cookies.Append(cname, "",
                     new CookieOptions
                     {
@@ -103,6 +114,7 @@ namespace KitapAlimSatim.Web.Controllers
                 model.Message = _localizer["CheckoutSuccess"].Value;
             }else
             {
+                // oturum açılmadıysa oturum açma sayfasına yönlendir
                 return RedirectToAction("Login", "Account");
             }
             return View(model);

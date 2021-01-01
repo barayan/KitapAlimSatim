@@ -35,6 +35,7 @@ namespace KitapAlimSatim.Web
             // Session için
             services.AddSession(options =>
             {
+                // 30 dakika session süresi
                 options.IdleTimeout = TimeSpan.FromMinutes(30);
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
@@ -99,6 +100,7 @@ namespace KitapAlimSatim.Web
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+                // Product/{id} için gerekli route ayarý
                 endpoints.MapControllerRoute(
                     name: "product",
                     pattern: "Product/{productId}",

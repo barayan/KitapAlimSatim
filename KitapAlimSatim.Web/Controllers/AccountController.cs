@@ -29,7 +29,7 @@ namespace KitapAlimSatim.Web.Controllers
 
         private void GetUser()
         {
-            // Oturum açıldıysa user nesnesini dolduruyoruz
+            // Oturum açıldıysa daha sonra kullanmak için user nesnesini dolduruyoruz
             string login = HttpContext.Session.GetString("Login");
             if (login != null)
             {
@@ -39,6 +39,7 @@ namespace KitapAlimSatim.Web.Controllers
 
         private string GenerateRandomString(int lenght = 10)
         {
+            // Aşağıdaki karakterlerden verilen değer kadar rastgele karakter üreten fonksiyon. 
             var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
             var stringChars = new char[lenght];
             var random = new Random();
@@ -56,10 +57,11 @@ namespace KitapAlimSatim.Web.Controllers
             GetUser();
             if (user == null)
             {
+                // kullanıcı oturum açmadıysa anasayfaya yönlendir
                 HttpContext.Session.Remove("Login");
                 return Redirect("/");
             }
-            return View(new List<User> { user });
+            return View(user);
         }
 
         public IActionResult Login()
@@ -69,6 +71,7 @@ namespace KitapAlimSatim.Web.Controllers
 
         public IActionResult Register()
         {
+            // GET ile erişimde login sayfasına yönlendir
             return View("Login");
         }
 
@@ -81,6 +84,7 @@ namespace KitapAlimSatim.Web.Controllers
         [HttpPost]
         public IActionResult Login(string email, string password)
         {
+            // Oturum açma fonksiyonu
             if(email != null && password != null)
             {
                 List<User> users = _kitapAlimSatimDbContext.User.Where(
@@ -88,10 +92,12 @@ namespace KitapAlimSatim.Web.Controllers
                 && e.Password.Equals(password)
                 ).ToList();
 
+                // eğer eşleşme varsa oturum aç ve anasayfaya yönlendir
                 if (users.Count > 0)
                 {
                     User user = users.First();
                     HttpContext.Session.SetString("Login", user.Email);
+                    // dili kullanıcının diline göre ayarlıyoruz.
                     Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName, CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(user.Language)),
                         new CookieOptions
                         {
@@ -100,6 +106,7 @@ namespace KitapAlimSatim.Web.Controllers
                     return Redirect("/");
                 }
             }
+            // yönlendirme olmadıysa hata göster
             ModelState.AddModelError("LoginError", _localizer["InvalidCredentials"].Value);
             return View();
         }
@@ -112,16 +119,19 @@ namespace KitapAlimSatim.Web.Controllers
             {
                 bool exists = _kitapAlimSatimDbContext.User.Where(e => e.Email.ToLower().Equals(registerModel.email.ToLower())).Any();
 
+                // e-posta adresi alındı mı
                 if(exists)
                 {
                     error = _localizer["EmailIsTaken"].Value;
                 }
+                // parolalar uyuşuyor mu 
                 else if (registerModel.password != registerModel.confirmPassword)
                 {
                     error = _localizer["PasswordsNotMatch"].Value;
                 }
                 else
                 {
+                    // hata yok. kaydet
                     var user = new User
                     {
                         Email = registerModel.email.ToLower(),
@@ -135,6 +145,7 @@ namespace KitapAlimSatim.Web.Controllers
             }
             else
             {
+                // model geçersiz.
                 error = _localizer["RegisterGeneralError"].Value;
             }
             if(error != null) ModelState.AddModelError("RegisterError", error);
@@ -144,11 +155,13 @@ namespace KitapAlimSatim.Web.Controllers
         [HttpPost]
         public ContentResult Get(ProfileModel model)
         {
+            // Profil sayfasındaki ajax sorguları için kullanılan fonksiyon
             GetUser();
             string data = "false", error = "";
             bool success = true;
             if(user != null)
             {
+                // Genel istekler
                 switch (model.Request)
                 {
                     case "ayarlar":
@@ -290,6 +303,7 @@ namespace KitapAlimSatim.Web.Controllers
                     default:
                         break;
                 }
+                // yapılan değişiklikleri kaydet
                 _kitapAlimSatimDbContext.SaveChanges();
                 // Admin istekleri
                 if (user.IsAdmin == true)
@@ -305,6 +319,7 @@ namespace KitapAlimSatim.Web.Controllers
                             data = JsonConvert.SerializeObject(books);
                             break;
                         case "urunler":
+                            // ürünün kitabını ve ürünü satan kullanıcıyı join ederek birleştiriyoruz.
                             var products = _kitapAlimSatimDbContext.Product
                                 .Join(_kitapAlimSatimDbContext.Book, product => product.BookId, book => book.Id, (product, book) => new { product, book })
                                 .Join(_kitapAlimSatimDbContext.User, product => product.product.UserId, user => user.Id, (product, user) => new { product, user})
@@ -312,6 +327,7 @@ namespace KitapAlimSatim.Web.Controllers
                             data = JsonConvert.SerializeObject(products);
                             break;
                         case "siparisler":
+                            // modele göre siparişleri alıyoruz.
                             var orders = _kitapAlimSatimDbContext.Order.OrderByDescending(e => e.CreatedAt).ToList();
                             List<OrderModel> list = new List<OrderModel>();
                             foreach (Order item in orders)
@@ -322,26 +338,33 @@ namespace KitapAlimSatim.Web.Controllers
                                 // içini doldurma
                                 foreach (var oitem in orderItems)
                                 {
+                                    // ürünü satan satıcıyı ve kitabı alıyoruz.
                                     oitem.User = _kitapAlimSatimDbContext.User.Find(oitem.UserId);
                                     oitem.Book = _kitapAlimSatimDbContext.Book.Find(oitem.BookId);
                                 }
+                                // modeli ebeveyn sınıf ile dolduruyoruz.
                                 var orderItem = JsonConvert.DeserializeObject<OrderModel>(JsonConvert.SerializeObject(item));
                                 orderItem.OrderItemList = orderItems;
+                                // siparişi veren kullanıcı
                                 orderItem.User = _kitapAlimSatimDbContext.User.Find(item.UserId);
                                 list.Add(orderItem);
                             }
                             data = JsonConvert.SerializeObject(list);
                             break;
                         case "yorumlar":
+                            // join işlemi ile kullanıcı tablosunu da alıyoruz.
                             var comments = _kitapAlimSatimDbContext.Comment
                                 .Join(_kitapAlimSatimDbContext.User, comment => comment.UserId, user => user.Id, (comment, user) => new { comment, user })
                                 .OrderByDescending(e => e.comment.CreatedAt).ToList();
+                            // modele göre verileri dolduruyoruz
                             List<CommentModel> commentList = new List<CommentModel>();
                             foreach(var item in comments)
                             {
+                                // modeli ebeveyn sınıf ile dolduruyoruz.
                                 var commentItem = JsonConvert.DeserializeObject<CommentModel>(JsonConvert.SerializeObject(item.comment));
                                 commentItem.User = item.user;
                                 var product = _kitapAlimSatimDbContext.Product.Find(item.comment.ProductId);
+                                // modeli ebeveyn sınıf ile dolduruyoruz.
                                 commentItem.Product = JsonConvert.DeserializeObject<ProductModel>(JsonConvert.SerializeObject(product));
                                 commentItem.Product.Book = _kitapAlimSatimDbContext.Book.Find(commentItem.Product.BookId);
                                 commentList.Add(commentItem);
@@ -353,6 +376,7 @@ namespace KitapAlimSatim.Web.Controllers
                     }
                 }
             }
+            // json oluşturup yolluyoruz. 
             data = "{\"success\": " + (success ? "true" : "false") + ", \"data\": " + data + ", \"error\": \"" + error + "\"}";
             return Content(data, "application/json");
         }
@@ -361,23 +385,26 @@ namespace KitapAlimSatim.Web.Controllers
         [HttpPost]
         public IActionResult Post(BookModel model)
         {
-            if (model.Image != null)
+            GetUser();
+            // Resim yoksa ve kullanıcı admin değilse işlem yapmıyor
+            if (model.Image != null && user != null && user.IsAdmin == true)
             {
-
-                //Set Key Name
+                // resimin uzantısını ve dosya adını alıyoruz.
                 string extension = Path.GetExtension(model.Image.FileName);
                 string ImageName = Guid.NewGuid().ToString(), SavePath;
 
                 string random = ImageName + extension;
                 while(true)
                 {
-                    // Get url To Save
+                    // kaydetmek için dosya yolunu al
                     SavePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/media/image", random);
                     // Bu isimle dosya yoksa devam et
                     if (!System.IO.File.Exists(SavePath)) break;
+                    // eğer varsa rastgele dosya ismi oluştur
                     random = GenerateRandomString(ImageName.Length) + extension;
                 }
 
+                // veritabanına ekle
                 _kitapAlimSatimDbContext.Book.Add(new Book
                 {
                     Author = model.Author,
@@ -387,9 +414,12 @@ namespace KitapAlimSatim.Web.Controllers
                     Publisher = model.Publisher
                 });
 
+                // dosyayı oluştur
                 using (var stream = new FileStream(SavePath, FileMode.Create))
                 {
+                    // kopyala
                     model.Image.CopyTo(stream);
+                    // veritabanına kaydet
                     _kitapAlimSatimDbContext.SaveChanges();
                 }
             }

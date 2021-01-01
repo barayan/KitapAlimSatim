@@ -26,7 +26,7 @@ namespace KitapAlimSatim.Web.Controllers
 
         private void GetUser()
         {
-            // Oturum açıldıysa user nesnesini dolduruyoruz
+            // Oturum açıldıysa daha sonra kullanmak için user nesnesini dolduruyoruz
             string login = HttpContext.Session.GetString("Login");
             if (login != null)
             {
@@ -37,10 +37,14 @@ namespace KitapAlimSatim.Web.Controllers
         public IActionResult Index(int productId)
         {
             Product product = _kitapAlimSatimDbContext.Product.Find(productId);
+            // modeli ebeveyn sınıf ile dolduruyoruz.
             ProductModel model = JsonConvert.DeserializeObject<ProductModel>(JsonConvert.SerializeObject(product));
+            // kullanıcı ve kitap bilgilerini alıyoruz.
             model.Book = _kitapAlimSatimDbContext.Book.Find(model.BookId);
             model.User = _kitapAlimSatimDbContext.User.Find(model.UserId);
+            // ürünün yorumlarını modele göre alıyoruz
             var comments = _kitapAlimSatimDbContext.Comment.Where(e => e.ProductId == productId).ToList();
+            // modeli ebeveyn sınıf ile dolduruyoruz.
             var commentModel = JsonConvert.DeserializeObject<List<CommentModel>>(JsonConvert.SerializeObject(comments));
             foreach(var item in commentModel)
             {
@@ -54,6 +58,7 @@ namespace KitapAlimSatim.Web.Controllers
         {
             GetUser();
             if (user == null) return RedirectToAction("Login", "Account");
+            // Kitapları gönderiyoruz.
             List<Book> model = _kitapAlimSatimDbContext.Book.ToList();
             return View(model);
         }
@@ -61,9 +66,11 @@ namespace KitapAlimSatim.Web.Controllers
         [HttpPost]
         public IActionResult Add(int book, double price)
         {
+            // ürün ekleme fonskiyonu
             GetUser();
             List<Book> model = _kitapAlimSatimDbContext.Book.ToList();
 
+            // kitap kayıtlıysa ve oturum açıldıysa devam et
             bool bookExist = _kitapAlimSatimDbContext.Book.Find(book) != null;
             if (bookExist && price > 0 && user != null)
             {
@@ -84,7 +91,9 @@ namespace KitapAlimSatim.Web.Controllers
         [HttpPost]
         public IActionResult Comment(string comment, int productId)
         {
+            // yorum ekleme fonksiyonu
             GetUser();
+            // oturum açıksa veya yorum boş değilse devam et
             if(user != null && !string.IsNullOrEmpty(comment))
             {
                 _kitapAlimSatimDbContext.Comment.Add(new Comment
@@ -95,7 +104,7 @@ namespace KitapAlimSatim.Web.Controllers
                 });
                 _kitapAlimSatimDbContext.SaveChanges();
             }
-
+            // ürüne geri dön
             return RedirectToAction("Index", new { productId = productId });
         }
     }
